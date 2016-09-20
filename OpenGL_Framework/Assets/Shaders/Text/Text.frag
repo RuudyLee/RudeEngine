@@ -7,7 +7,6 @@ in vec2 texcoord;
 
 out vec4 outColor;
 
-void main()
-{
+void main() {
 	outColor = vec4(1, 1, 1, texture(uTex, texcoord).r) * uColor;
 }

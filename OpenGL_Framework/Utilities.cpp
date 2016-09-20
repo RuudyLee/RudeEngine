@@ -6,8 +6,7 @@
 GLuint _FullScreenQuadVAO = GL_NONE;
 GLuint _FullScreenQuadVBO = GL_NONE;
 
-void InitFullScreenQuad()
-{
+void InitFullScreenQuad() {
 	float VBO_DATA[] = 
 	{
 		-1.0f, -1.0f, 0.0f,
@@ -46,8 +45,7 @@ void InitFullScreenQuad()
 	glBindVertexArray(GL_NONE);
 }
 
-void DrawFullScreenQuad()
-{
+void DrawFullScreenQuad() {
 	glBindVertexArray(_FullScreenQuadVAO);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);

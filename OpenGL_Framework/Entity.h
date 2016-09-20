@@ -3,8 +3,7 @@
 #include "Mesh.h"
 #include <memory>
 
-class Entity
-{
+class Entity {
 public:
 	Entity();
 	Entity(std::shared_ptr<Mesh> _mesh, std::shared_ptr<Texture> _texture);

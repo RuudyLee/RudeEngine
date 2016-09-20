@@ -2,8 +2,7 @@
 #include <SOIL.h>
 #include <iostream>
 
-Texture::~Texture()
-{
+Texture::~Texture() {
 	Unload();
 }
 
@@ -11,8 +10,7 @@ bool Texture::Load(const std::string &file)
 {
 	TexObj = SOIL_load_OGL_texture(file.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 
-	if (TexObj == 0)
-	{
+	if (TexObj == 0) {
 		std::cout << "Texture failed to load.\n" << SOIL_last_result() << std::endl;
 		return false;
 	}
@@ -26,21 +24,17 @@ bool Texture::Load(const std::string &file)
 	return true;
 }
 
-void Texture::Unload()
-{
-	if (TexObj != 0)
-	{
+void Texture::Unload() {
+	if (TexObj != 0) {
 		glDeleteTextures(1, &TexObj);
 	}
 }
 
 	 
-void Texture::Bind()
-{
+void Texture::Bind() {
 	glBindTexture(GL_TEXTURE_2D, TexObj);
 }
 
-void Texture::Unbind()
-{
+void Texture::Unbind() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

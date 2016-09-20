@@ -5,16 +5,14 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-struct point 
-{
+struct point {
 	GLfloat x;
 	GLfloat y;
 	GLfloat s;
 	GLfloat t;
 };
 
-class Text
-{
+class Text {
 public:
 	Text();
 	~Text();

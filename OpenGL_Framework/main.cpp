@@ -1,20 +1,20 @@
 #include <windows.h>
 #include <iostream>
+#include <memory>
 #include "Game.h"
 #include <GL\glew.h>
 #include <GL\freeglut.h>
 
 const int FRAME_DELAY_SPRITE = 1000 / FRAMES_PER_SECOND;
 
-Game *theGame;
+std::unique_ptr<Game> theGame;
 
 /* function DisplayCallbackFunction(void)
  * Description:
  *  - this is the openGL display routine
  *  - this draws the sprites appropriately
  */
-void DisplayCallbackFunction(void)
-{
+void DisplayCallbackFunction(void) {
 	theGame->draw();
 }
 
@@ -22,8 +22,7 @@ void DisplayCallbackFunction(void)
  * Description:
  *   - this handles keyboard input when a button is pressed
  */
-void KeyboardCallbackFunction(unsigned char key, int x, int y)
-{
+void KeyboardCallbackFunction(unsigned char key, int x, int y) {
 	theGame->keyboardDown(key, x, y);
 
 }
@@ -31,8 +30,7 @@ void KeyboardCallbackFunction(unsigned char key, int x, int y)
  * Description:
  *   - this handles keyboard input when a button is lifted
  */
-void KeyboardUpCallbackFunction(unsigned char key, int x, int y)
-{
+void KeyboardUpCallbackFunction(unsigned char key, int x, int y) {
 	theGame->keyboardUp(key, x, y);
 }
 
@@ -44,16 +42,14 @@ void KeyboardUpCallbackFunction(unsigned char key, int x, int y)
  *  - changes the frame number and calls for a redisplay
  *  - FRAME_DELAY_SPRITE is the number of milliseconds to wait before calling the timer again
  */
-void TimerCallbackFunction(int value)
-{
+void TimerCallbackFunction(int value) {
 	theGame->update();
 
 	glutPostRedisplay();
 	glutTimerFunc(FRAME_DELAY_SPRITE, TimerCallbackFunction, 0);
 }
 
-void MouseClickCallbackFunction(int button, int state, int x, int y)
-{
+void MouseClickCallbackFunction(int button, int state, int x, int y) {
 	theGame->mouseClicked(button, state, x, y);
 	glutPostRedisplay();
 }
@@ -62,14 +58,12 @@ void MouseClickCallbackFunction(int button, int state, int x, int y)
  * Description:
  *   - this is called when the mouse is clicked and moves
  */
-void MouseMotionCallbackFunction(int x, int y)
-{
+void MouseMotionCallbackFunction(int x, int y) {
 	theGame->mouseMoved(x, y);
 	glutPostRedisplay();
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	/* initialize the window and OpenGL properly */
 	glutInit(&argc, argv);
 	glutInitContextVersion(4, 2);
@@ -78,8 +72,7 @@ int main(int argc, char **argv)
 	glutCreateWindow("OpenGL Framework");
 
 	glewExperimental = true;
-	if (glewInit() != GLEW_OK)
-	{
+	if (glewInit() != GLEW_OK) {
 		std::cout << "GLEW failed to initialize\n";
 	}
 
@@ -95,7 +88,7 @@ int main(int argc, char **argv)
 	glutTimerFunc(1, TimerCallbackFunction, 0);
 
 	/* init the game */
-	theGame = new Game();
+	theGame = std::unique_ptr<Game>(new Game());
 	theGame->initializeGame();
 
 	/* start the game */

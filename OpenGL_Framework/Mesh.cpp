@@ -9,10 +9,8 @@
 #define CHAR_BUFFER_SIZE 128
 #define BUFFER_OFFSET(i) ((char *)0 + (i))
 
-struct MeshFace
-{
-	MeshFace()
-	{
+struct MeshFace {
+	MeshFace() {
 		vertices[0] = 0;
 		vertices[1] = 0;
 		vertices[2] = 0;
@@ -49,25 +47,21 @@ struct MeshFace
 	unsigned normals[3];
 };
 
-Mesh::Mesh()
-{
+Mesh::Mesh() {
 }
 
 
-Mesh::~Mesh()
-{
+Mesh::~Mesh() {
 	Unload();
 }
 
 // Load a mesh, and send to OpenGL
-bool Mesh::LoadFromFile(const std::string str)
-{
+bool Mesh::LoadFromFile(const std::string str) {
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
 
-	if (!(loadOBJ(str.c_str(), vertices, uvs, normals)))
-	{
+	if (!(loadOBJ(str.c_str(), vertices, uvs, normals))) {
 		return false;
 	}
 
@@ -107,8 +101,7 @@ bool Mesh::LoadFromFile(const std::string str)
 }
 
 // Release data from OpenGL (VRAM)
-void Mesh::Unload()
-{
+void Mesh::Unload() {
 	glDeleteBuffers(1, &_VBO_Normals);
 	glDeleteBuffers(1, &_VBO_UVs);
 	glDeleteBuffers(1, &_VBO_Vertices);
@@ -127,13 +120,11 @@ void Mesh::Unbind() {
 	glBindVertexArray(0);
 }
 
-unsigned int Mesh::GetNumFaces() const
-{
+unsigned int Mesh::GetNumFaces() const {
 	return _NumFaces;
 }
 
-unsigned int Mesh::GetNumVertices() const
-{
+unsigned int Mesh::GetNumVertices() const {
 	return _NumVertices;
 }
 

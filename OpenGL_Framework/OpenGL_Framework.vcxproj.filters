@@ -44,7 +44,9 @@
     <ClCompile Include="Text.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -76,13 +78,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\PassThrough.frag">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Assets\Shaders\StaticGeometry.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\Shaders\PassThrough.vert">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Assets\Shaders\Text\Text.frag">

@@ -13,8 +13,7 @@ out vec3 norm;
 out vec3 pos;
 out float vertexID;
 
-void main()
-{
+void main() {
 	texcoord = in_uv;
 	norm = mat3(uView) * mat3(uModel) * in_normal; // isolates the rotation matrix from modelview matrix
 

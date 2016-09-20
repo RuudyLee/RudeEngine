@@ -21,12 +21,7 @@
 #define MOVEMENT_SPEED			10.0f
 #define MOUSE_SPEED				0.001f
 
-#define BLOOM_THRESHOLD			0.25f
-#define BLOOM_DOWNSCALE			2.0f
-#define BLOOM_BLUR_PASSES		8
-
-class Game
-{
+class Game {
 public:
 	Game();
 	~Game();
@@ -43,18 +38,11 @@ public:
 	void mouseMoved(int x, int y);
 
 	/* Data Members */
-	Timer *updateTimer	= nullptr;
+	std::unique_ptr<Timer> updateTimer;
 	float TotalGameTime = 0.0f;
 	float InterpolationParam = 0.0f;
 
 	ShaderProgram StaticGeometry;
-	ShaderProgram NoLight;
-	ShaderProgram BloomHighPass;
-	ShaderProgram BlurHorizontalGaussian;
-	ShaderProgram BlurVerticalGaussian;
-	ShaderProgram BlurHorizontalBox;
-	ShaderProgram BlurVerticalBox;
-	ShaderProgram BloomComposite;
 
 	std::shared_ptr<Mesh> GoatMesh;
 	std::shared_ptr<Mesh> LanceMesh;

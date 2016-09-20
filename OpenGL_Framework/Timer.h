@@ -9,12 +9,11 @@
  *   in our program easily so we can use it in things
  *   like physics calculations 
  */
-class Timer
-{
+class Timer {
 public:
 	Timer()
 	{
-		previousTime = glutGet(GLUT_ELAPSED_TIME);
+		previousTime = (float)glutGet(GLUT_ELAPSED_TIME);
 		this->tick();
 	}
 
@@ -23,7 +22,7 @@ public:
 	// update the timer clock
 	float tick()
 	{
-		currentTime = glutGet(GLUT_ELAPSED_TIME);
+		currentTime = (float)glutGet(GLUT_ELAPSED_TIME);
 		elapsedTime = currentTime - previousTime;
 		previousTime = currentTime;
 		return elapsedTime;

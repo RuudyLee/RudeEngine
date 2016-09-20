@@ -2,8 +2,7 @@
 #include <GL\glew.h>
 #include <string>
 
-class Texture
-{
+class Texture {
 public:
 	Texture() = default;
 	~Texture();

@@ -6,17 +6,14 @@ using std::cout;
 #include <GL\glew.h>
 #include <GL\freeglut.h>
 
-Text::Text()
-{
+Text::Text() {
 }
 
 
-Text::~Text()
-{
+Text::~Text() {
 }
 
-int Text::Init()
-{
+int Text::Init() {
 	/* Initialize the FreeType2 library */
 	if (FT_Init_FreeType(&ft)) {
 		cout << "Could not init freetype library\n";
@@ -35,10 +32,10 @@ int Text::Init()
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 
+	return 1;
 }
 
-void Text::Render(const char *text, float x, float y, float sx, float sy)
-{
+void Text::Render(const char *text, float x, float y, float sx, float sy) {
 	const char *p;
 	FT_GlyphSlot g = face->glyph;
 

@@ -3,17 +3,14 @@
 #include <iostream>
 #include <vector>
 
-ShaderProgram::ShaderProgram()
-{
+ShaderProgram::ShaderProgram() {
 }
 
 
-ShaderProgram::~ShaderProgram()
-{
+ShaderProgram::~ShaderProgram() {
 }
 
-bool ShaderProgram::Load(const std::string &vertFile, const std::string &fragFile)
-{
+bool ShaderProgram::Load(const std::string &vertFile, const std::string &fragFile) {
 	// create shader and program objects
 	_VertexShader = glCreateShader(GL_VERTEX_SHADER);
 	_FragShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -29,16 +26,14 @@ bool ShaderProgram::Load(const std::string &vertFile, const std::string &fragFil
 	glShaderSource(_FragShader, 1, &temp, NULL);
 
 	// Compile the code
-	if (!CompileShader(_VertexShader))
-	{
+	if (!CompileShader(_VertexShader)) {
 		std::cout << "Vertex Shader failed to compile.\n";
 		OutputShaderLog(_VertexShader);
 		Unload();
 		return false;
 	}
 
-	if (!CompileShader(_FragShader))
-	{
+	if (!CompileShader(_FragShader)) {
 		std::cout << "Fragment Shader failed to compile.\n";
 		OutputShaderLog(_FragShader);
 		Unload();
@@ -49,8 +44,7 @@ bool ShaderProgram::Load(const std::string &vertFile, const std::string &fragFil
 	glAttachShader(_ProgramID, _VertexShader);
 	glAttachShader(_ProgramID, _FragShader);
 
-	if (!LinkProgram())
-	{
+	if (!LinkProgram()) {
 		std::cout << "Shader program failed to link.\n";
 		OutputProgramLog();
 		Unload();
@@ -61,22 +55,18 @@ bool ShaderProgram::Load(const std::string &vertFile, const std::string &fragFil
 	return true;
 }
 
-bool ShaderProgram::IsLoaded() const
-{
+bool ShaderProgram::IsLoaded() const {
 	return _IsInit;
 }
 
-void ShaderProgram::Unload()
-{
-	if (_VertexShader != 0)
-	{
+void ShaderProgram::Unload() {
+	if (_VertexShader != 0) {
 		glDetachShader(_ProgramID, _VertexShader);
 		glDeleteShader(_VertexShader);
 		_VertexShader = 0;
 	}
 
-	if (_FragShader != 0)
-	{
+	if (_FragShader != 0) {
 		glDetachShader(_ProgramID, _FragShader);
 		glDeleteShader(_FragShader);
 		_FragShader = 0;
@@ -91,8 +81,7 @@ void ShaderProgram::Unload()
 	_IsInit = false;
 }
 
-bool ShaderProgram::LinkProgram()
-{
+bool ShaderProgram::LinkProgram() {
 	glLinkProgram(_ProgramID);
 
 	GLint success;
@@ -101,87 +90,72 @@ bool ShaderProgram::LinkProgram()
 	return success == GL_TRUE;
 }
 
-void ShaderProgram::Bind() const
-{
+void ShaderProgram::Bind() const {
 	glUseProgram(_ProgramID);
 }
 
-void ShaderProgram::Unbind()
-{
+void ShaderProgram::Unbind() {
 	glUseProgram(0);
 }
 
-void ShaderProgram::AddAttribute(unsigned int index, const std::string &attribName)
-{
+void ShaderProgram::AddAttribute(unsigned int index, const std::string &attribName) {
 	glBindAttribLocation(_ProgramID, index, attribName.c_str());
 }
 
 // returns -1 if the attribute does not exist
-int ShaderProgram::GetAttribLocation(const std::string &attribName)
-{
+int ShaderProgram::GetAttribLocation(const std::string &attribName) {
 	return glGetAttribLocation(_ProgramID, attribName.c_str());
 }
 
 // returns -1 if uniform does not exist
-int ShaderProgram::GetUniformLocation(const std::string &uniformName)
-{
+int ShaderProgram::GetUniformLocation(const std::string &uniformName) {
 	return glGetUniformLocation(_ProgramID, uniformName.c_str());
 }
 
-void ShaderProgram::SendUniform(const std::string &name, int integer)
-{
+void ShaderProgram::SendUniform(const std::string &name, int integer) {
 	GLint location = GetUniformLocation(name);
 	glUniform1i(location, integer);
 }
 
-void ShaderProgram::SendUniform(const std::string &name, unsigned int integer)
-{
+void ShaderProgram::SendUniform(const std::string &name, unsigned int integer) {
 	GLint location = GetUniformLocation(name);
 	glUniform1ui(location, integer);
 }
 
-void ShaderProgram::SendUniform(const std::string &name, float scalar)
-{
+void ShaderProgram::SendUniform(const std::string &name, float scalar) {
 	GLint location = GetUniformLocation(name);
 	glUniform1f(location, scalar);
 }
 
-void ShaderProgram::SendUniform(const std::string &name, const glm::vec2 &vector)
-{
+void ShaderProgram::SendUniform(const std::string &name, const glm::vec2 &vector) {
 	GLint location = GetUniformLocation(name);
 	glUniform2f(location, vector.x, vector.y);
 }
 
-void ShaderProgram::SendUniform(const std::string &name, const glm::vec3 &vector)
-{
+void ShaderProgram::SendUniform(const std::string &name, const glm::vec3 &vector) {
 	GLint location = GetUniformLocation(name);
 	glUniform3f(location, vector.x, vector.y, vector.z);
 }
 
-void ShaderProgram::SendUniform(const std::string &name, const glm::vec4 &vector)
-{
+void ShaderProgram::SendUniform(const std::string &name, const glm::vec4 &vector) {
 	GLint location = GetUniformLocation(name);
 	glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
 }
 
-void ShaderProgram::SendUniformMat3(const std::string &name, float *matrix, bool transpose)
-{
+void ShaderProgram::SendUniformMat3(const std::string &name, float *matrix, bool transpose) {
 	GLint location = GetUniformLocation(name);
 	glUniformMatrix3fv(location, 1, transpose, matrix);
 }
 
-void ShaderProgram::SendUniformMat4(const std::string &name, float *matrix, bool transpose)
-{
+void ShaderProgram::SendUniformMat4(const std::string &name, float *matrix, bool transpose) {
 	GLint location = GetUniformLocation(name);
 	glUniformMatrix4fv(location, 1, transpose, matrix);
 }
 
-std::string ShaderProgram::ReadFile(const std::string &fileName) const
-{
+std::string ShaderProgram::ReadFile(const std::string &fileName) const {
 	std::ifstream inStream(fileName);
 
-	if (!inStream.good())
-	{
+	if (!inStream.good()) {
 		std::cout << "Shader file not found.\n";
 		return std::string();
 	}
@@ -190,8 +164,7 @@ std::string ShaderProgram::ReadFile(const std::string &fileName) const
 	return data;
 }
 
-bool ShaderProgram::CompileShader(GLuint shader) const
-{
+bool ShaderProgram::CompileShader(GLuint shader) const {
 	glCompileShader(shader);
 
 	GLint success;
@@ -200,8 +173,7 @@ bool ShaderProgram::CompileShader(GLuint shader) const
 	return success == GL_TRUE;
 }
 
-void ShaderProgram::OutputShaderLog(GLuint shader) const
-{
+void ShaderProgram::OutputShaderLog(GLuint shader) const {
 	std::vector<char> infoLog;
 	infoLog.resize(512);
 
@@ -213,8 +185,7 @@ void ShaderProgram::OutputShaderLog(GLuint shader) const
 	std::cout << std::string(infoLog.begin(), infoLog.end()) << std::endl;
 }
 
-void ShaderProgram::OutputProgramLog() const
-{
+void ShaderProgram::OutputProgramLog() const {
 	std::vector<char> infoLog;
 	infoLog.resize(512);
 

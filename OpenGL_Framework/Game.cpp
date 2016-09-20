@@ -5,80 +5,60 @@
 #include <GL\freeglut.h>
 #include <glm\gtc\matrix_transform.hpp>
 
-Game::Game()
-{
+Game::Game() {
 }
 
-Game::~Game()
-{
-	delete updateTimer;
-
+Game::~Game() {
 	StaticGeometry.Unload();
 }
 
-void Game::initializeGame()
-{
-	updateTimer = new Timer();
+void Game::initializeGame() {
+	updateTimer = std::unique_ptr<Timer>(new Timer());
 
-	InitFullScreenQuad();
 	ModeDisplay.Init();
 	glEnable(GL_DEPTH_TEST);
 
-	if (!StaticGeometry.Load("./Assets/Shaders/StaticGeometry.vert", "./Assets/Shaders/Phong.frag"))
-	{
-		std::cout << "Shader failed to Initalize.\n";
-		system("pause");
-		exit(0);
-	}
-
-	if (!NoLight.Load("./Assets/Shaders/StaticGeometry.vert", "./Assets/Shaders/PassThrough.frag"))
-	{
+	if (!StaticGeometry.Load("./Assets/Shaders/StaticGeometry.vert", "./Assets/Shaders/Phong.frag")) {
 		std::cout << "Shader failed to Initalize.\n";
 		system("pause");
 		exit(0);
 	}
 
 	GoatMesh = std::shared_ptr<Mesh>(new Mesh());
-	if (!GoatMesh->LoadFromFile("./Assets/Models/Run1.obj"))
-	{
+	if (!GoatMesh->LoadFromFile("./Assets/Models/Run1.obj")) {
 		std::cout << "Model failed to load.\n";
 		system("pause");
 		exit(0);
 	}
 
 	LanceMesh = std::shared_ptr<Mesh>(new Mesh());
-	if (!LanceMesh->LoadFromFile("./Assets/Models/LanceRun1.obj"))
-	{
+	if (!LanceMesh->LoadFromFile("./Assets/Models/LanceRun1.obj")) {
 		std::cout << "Model failed to load.\n";
 		system("pause");
 		exit(0);
 	}
 
 	GroundMesh = std::shared_ptr<Mesh>(new Mesh());
-	if (!GroundMesh->LoadFromFile("./Assets/Models/Ground.obj"))
-	{
+	if (!GroundMesh->LoadFromFile("./Assets/Models/Ground.obj")) {
 		std::cout << "Model failed to load.\n";
 		system("pause");
 		exit(0);
 	}
 
 	GoatTexture = std::shared_ptr<Texture>(new Texture());
-	if (!GoatTexture->Load("./Assets/Textures/GoatKnight.png"))
-	{
+	if (!GoatTexture->Load("./Assets/Textures/GoatKnight.png")) {
 		system("pause");
 		exit(0);
 	}
 
 	LanceTexture = std::shared_ptr<Texture>(new Texture());
-	if (!LanceTexture->Load("./Assets/Textures/Fire.png"))
-	{
+	if (!LanceTexture->Load("./Assets/Textures/Fire.png")) {
 		system("pause");
 		exit(0);
 	}
 
 	GroundTexture = std::shared_ptr<Texture>(new Texture());
-	if (!GroundTexture->Load("./Assets/Textures/Ground.png"))
-	{
+	if (!GroundTexture->Load("./Assets/Textures/Ground.png")) {
 		system("pause");
 		exit(0);
 	}
@@ -92,8 +72,7 @@ void Game::initializeGame()
 	CameraProjection = glm::perspective(60.0f, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 10000.0f);
 }
 
-void Game::update()
-{
+void Game::update() {
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
 
@@ -118,20 +97,16 @@ void Game::update()
 
 	glm::vec3 up = glm::cross(right, direction);
 
-	if (KeyWDown)
-	{
+	if (KeyWDown) {
 		position += direction * deltaTime * MOVEMENT_SPEED;
 	}
-	if (KeySDown)
-	{
+	if (KeySDown) {
 		position -= direction * deltaTime * MOVEMENT_SPEED;
 	}
-	if (KeyDDown)
-	{
+	if (KeyDDown) {
 		position += right * deltaTime * MOVEMENT_SPEED;
 	}
-	if (KeyADown)
-	{
+	if (KeyADown) {
 		position -= right * deltaTime * MOVEMENT_SPEED;
 	}
 
@@ -142,22 +117,19 @@ void Game::update()
 
 }
 
-void Game::draw()
-{
+void Game::draw() {
 	/* Black background */
-	glClearColor(0.1, 0.2, 0.3, 1);
+	glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	/* Render the scene */
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	/* States */
-	if (WireframeOn)
-	{
+	if (WireframeOn) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
-	else
-	{
+	else {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
@@ -167,12 +139,14 @@ void Game::draw()
 	StaticGeometry.SendUniformMat4("uProj", &CameraProjection[0][0], false);
 	StaticGeometry.SendUniform("uTex", 0);
 	StaticGeometry.SendUniformMat4("CameraPosition", &CameraTransform[0][0], false);
+	StaticGeometry.SendUniform("LightPosition", glm::vec4(0.0f, 3.0f, 0.0f, 1.0f));
 	StaticGeometry.SendUniform("LightAmbient", glm::vec3(0.15f, 0.15f, 0.15f));
-
+	StaticGeometry.SendUniform("LightDiffuse", glm::vec3(0.7f, 0.7f, 0.7f));
+	StaticGeometry.SendUniform("LightSpecular", glm::vec3(0.8f, 0.8f, 0.8f));
+	StaticGeometry.SendUniform("LightAttenuationConstant", 1.0f);
+	StaticGeometry.SendUniform("LightAttenuationLinear", 0.1f);
+	StaticGeometry.SendUniform("LightAttenuationQuadratic", 0.01f);
 	StaticGeometry.SendUniform("LightSpecularExponent", 50.0f);
-	StaticGeometry.SendUniform("Attenuation_Constant", 1.0f);
-	StaticGeometry.SendUniform("Attenuation_Linear", 0.1f);
-	StaticGeometry.SendUniform("Attenuation_Quadratic", 0.01f);
 
 	Goat.Draw();
 	Lance.Draw();
@@ -190,11 +164,10 @@ void Game::renderText()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	/* Render Text for mode and values */
-	if (TextDisplayOn)
-	{
+	if (TextDisplayOn) {
 		glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-		float sx = 2.0 / glutGet(GLUT_WINDOW_WIDTH);
-		float sy = 2.0 / glutGet(GLUT_WINDOW_HEIGHT);
+		float sx = 2.0f / glutGet(GLUT_WINDOW_WIDTH);
+		float sy = 2.0f / glutGet(GLUT_WINDOW_HEIGHT);
 
 		ModeDisplay.program.Bind();
 
@@ -205,12 +178,10 @@ void Game::renderText()
 		FT_Set_Pixel_Sizes(ModeDisplay.face, 0, 24);
 		ModeDisplay.program.SendUniform("uColor", Color);
 
-		if (WireframeOn)
-		{
+		if (WireframeOn) {
 			ModeDisplay.Render("1: Wireframe mode is ON", -1 + 8 * sx, 1 - 50 * sy, sx, sy);
 		}
-		else
-		{
+		else {
 			ModeDisplay.Render("1: Wireframe mode is OFF", -1 + 8 * sx, 1 - 50 * sy, sx, sy);
 		}
 
@@ -219,8 +190,7 @@ void Game::renderText()
 	}
 }
 
-void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
-{
+void Game::keyboardDown(unsigned char key, int mouseX, int mouseY) {
 	switch (key)
 	{
 	case 27: // the escape key
@@ -250,8 +220,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY)
 	}
 }
 
-void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
-{
+void Game::keyboardUp(unsigned char key, int mouseX, int mouseY) {
 	switch (key)
 	{
 	case 32: // the space bar
@@ -275,12 +244,9 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY)
 	}
 }
 
-void Game::mouseClicked(int button, int state, int x, int y)
-{
-	if (state == GLUT_DOWN)
-	{
-		switch (button)
-		{
+void Game::mouseClicked(int button, int state, int x, int y) {
+	if (state == GLUT_DOWN)	{
+		switch (button)	{
 		case GLUT_LEFT_BUTTON:
 
 			break;
@@ -292,8 +258,7 @@ void Game::mouseClicked(int button, int state, int x, int y)
 			break;
 		}
 	}
-	else
-	{
+	else {
 
 	}
 }
@@ -306,8 +271,7 @@ void Game::mouseClicked(int button, int state, int x, int y)
  *   must be converted to screen coordinates using the screen to window pixels ratio
  *   and the y must be flipped to make the bottom left corner the origin.
  */
-void Game::mouseMoved(int x, int y)
-{
+void Game::mouseMoved(int x, int y) {
 	xpos = (float)x;
 	ypos = (float)y;
 }

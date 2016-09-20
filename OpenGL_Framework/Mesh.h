@@ -3,8 +3,7 @@
 #include <vector>
 #include <GL\glew.h>
 
-class Mesh
-{
+class Mesh {
 public:
 	Mesh();
 	~Mesh();
