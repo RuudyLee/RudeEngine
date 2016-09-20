@@ -9,7 +9,7 @@ Game::Game() {
 }
 
 Game::~Game() {
-	StaticGeometry.Unload();
+	StaticGeometry->Unload();
 }
 
 void Game::initializeGame() {
@@ -18,21 +18,15 @@ void Game::initializeGame() {
 	ModeDisplay.Init();
 	glEnable(GL_DEPTH_TEST);
 
-	if (!StaticGeometry.Load("./Assets/Shaders/StaticGeometry.vert", "./Assets/Shaders/Phong.frag")) {
+	StaticGeometry = std::shared_ptr<ShaderProgram>(new ShaderProgram());
+	if (!StaticGeometry->Load("./Assets/Shaders/StaticGeometry.vert", "./Assets/Shaders/Phong.frag")) {
 		std::cout << "Shader failed to Initalize.\n";
 		system("pause");
 		exit(0);
 	}
 
-	GoatMesh = std::shared_ptr<Mesh>(new Mesh());
-	if (!GoatMesh->LoadFromFile("./Assets/Models/Run1.obj")) {
-		std::cout << "Model failed to load.\n";
-		system("pause");
-		exit(0);
-	}
-
-	LanceMesh = std::shared_ptr<Mesh>(new Mesh());
-	if (!LanceMesh->LoadFromFile("./Assets/Models/LanceRun1.obj")) {
+	DoorMesh = std::shared_ptr<Mesh>(new Mesh());
+	if (!DoorMesh->LoadFromFile("./Assets/Models/Door.obj")) {
 		std::cout << "Model failed to load.\n";
 		system("pause");
 		exit(0);
@@ -45,17 +39,12 @@ void Game::initializeGame() {
 		exit(0);
 	}
 
-	GoatTexture = std::shared_ptr<Texture>(new Texture());
-	if (!GoatTexture->Load("./Assets/Textures/GoatKnight.png")) {
+	DoorTexture = std::shared_ptr<Texture>(new Texture());
+	if (!DoorTexture->Load("./Assets/Textures/Door.tga")) {
 		system("pause");
 		exit(0);
 	}
 
-	LanceTexture = std::shared_ptr<Texture>(new Texture());
-	if (!LanceTexture->Load("./Assets/Textures/Fire.png")) {
-		system("pause");
-		exit(0);
-	}
 
 	GroundTexture = std::shared_ptr<Texture>(new Texture());
 	if (!GroundTexture->Load("./Assets/Textures/Ground.png")) {
@@ -63,11 +52,15 @@ void Game::initializeGame() {
 		exit(0);
 	}
 
-
 	// Entities
-	Goat.Init(GoatMesh, GoatTexture);
-	Lance.Init(LanceMesh, LanceTexture);
+	Door.Init(DoorMesh, DoorTexture);
+	Door.Scale(0.01f);
 	Ground.Init(GroundMesh, GroundTexture);
+
+	// Scenes
+	BasicScene.Init(StaticGeometry);
+	BasicScene.AddGameObject(Door);
+	BasicScene.AddGameObject(Ground);
 
 	CameraProjection = glm::perspective(60.0f, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 10000.0f);
 }
@@ -79,42 +72,48 @@ void Game::update() {
 	float deltaTime = updateTimer->getElapsedTimeSeconds();
 	TotalGameTime += deltaTime;
 
-	/* FPS Control */
-	horizontalAngle += MOUSE_SPEED * float(WINDOW_WIDTH_MID - xpos);
-	verticalAngle += MOUSE_SPEED * float(WINDOW_HEIGHT_MID - ypos);
-
-	glm::vec3 direction(
-		cos(verticalAngle) * sin(horizontalAngle),
-		sin(verticalAngle),
-		cos(verticalAngle) * cos(horizontalAngle)
-		);
-
-	glm::vec3 right = glm::vec3(
-		sin(horizontalAngle - 3.14f / 2.0f),
-		0,
-		cos(horizontalAngle - 3.14f / 2.0f)
-		);
-
-	glm::vec3 up = glm::cross(right, direction);
-
-	if (KeyWDown) {
-		position += direction * deltaTime * MOVEMENT_SPEED;
+	if (CursorOn) {
+		glutSetCursor(GLUT_CURSOR_INHERIT);
 	}
-	if (KeySDown) {
-		position -= direction * deltaTime * MOVEMENT_SPEED;
+	else {
+		glutSetCursor(GLUT_CURSOR_NONE);
+		glutWarpPointer(WINDOW_WIDTH_MID, WINDOW_HEIGHT_MID);
+
+		/* FPS Control */
+		horizontalAngle += MOUSE_SPEED * float(WINDOW_WIDTH_MID - xpos);
+		verticalAngle += MOUSE_SPEED * float(WINDOW_HEIGHT_MID - ypos);
+
+		glm::vec3 direction(
+			cos(verticalAngle) * sin(horizontalAngle),
+			sin(verticalAngle),
+			cos(verticalAngle) * cos(horizontalAngle)
+			);
+
+		glm::vec3 right = glm::vec3(
+			sin(horizontalAngle - 3.14f / 2.0f),
+			0,
+			cos(horizontalAngle - 3.14f / 2.0f)
+			);
+
+		glm::vec3 up = glm::cross(right, direction);
+
+		if (KeyWDown) {
+			position += direction * deltaTime * MOVEMENT_SPEED;
+		}
+		if (KeySDown) {
+			position -= direction * deltaTime * MOVEMENT_SPEED;
+		}
+		if (KeyDDown) {
+			position += right * deltaTime * MOVEMENT_SPEED;
+		}
+		if (KeyADown) {
+			position -= right * deltaTime * MOVEMENT_SPEED;
+		}
+
+		CameraTransform = glm::lookAt(position, position + direction, up);
 	}
-	if (KeyDDown) {
-		position += right * deltaTime * MOVEMENT_SPEED;
-	}
-	if (KeyADown) {
-		position -= right * deltaTime * MOVEMENT_SPEED;
-	}
 
-	CameraTransform = glm::lookAt(position, position + direction, up);
-
-
-	glutWarpPointer(WINDOW_WIDTH_MID, WINDOW_HEIGHT_MID);
-
+	BasicScene.Update(deltaTime);
 }
 
 void Game::draw() {
@@ -133,26 +132,26 @@ void Game::draw() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	StaticGeometry.Bind();
-	StaticGeometry.SendUniformMat4("uModel", &GoatKnightTransform[0][0], false);
-	StaticGeometry.SendUniformMat4("uView", &CameraTransform[0][0], false);
-	StaticGeometry.SendUniformMat4("uProj", &CameraProjection[0][0], false);
-	StaticGeometry.SendUniform("uTex", 0);
-	StaticGeometry.SendUniformMat4("CameraPosition", &CameraTransform[0][0], false);
-	StaticGeometry.SendUniform("LightPosition", glm::vec4(0.0f, 3.0f, 0.0f, 1.0f));
-	StaticGeometry.SendUniform("LightAmbient", glm::vec3(0.15f, 0.15f, 0.15f));
-	StaticGeometry.SendUniform("LightDiffuse", glm::vec3(0.7f, 0.7f, 0.7f));
-	StaticGeometry.SendUniform("LightSpecular", glm::vec3(0.8f, 0.8f, 0.8f));
-	StaticGeometry.SendUniform("LightAttenuationConstant", 1.0f);
-	StaticGeometry.SendUniform("LightAttenuationLinear", 0.1f);
-	StaticGeometry.SendUniform("LightAttenuationQuadratic", 0.01f);
-	StaticGeometry.SendUniform("LightSpecularExponent", 50.0f);
+	//TODO: GoatKnightTransform = glm::scale(glm::mat4(1.0f), glm::vec3(0.001f, 0.001f, 0.001f));
+	
 
-	Goat.Draw();
-	Lance.Draw();
-	Ground.Draw();
+	StaticGeometry->Bind();
+	StaticGeometry->SendUniformMat4("uView", &CameraTransform[0][0], false);
+	StaticGeometry->SendUniformMat4("uProj", &CameraProjection[0][0], false);
+	StaticGeometry->SendUniform("uTex", 0);
+	StaticGeometry->SendUniformMat4("CameraPosition", &CameraTransform[0][0], false);
+	StaticGeometry->SendUniform("LightPosition", glm::vec4(0.0f, 3.0f, 0.0f, 1.0f));
+	StaticGeometry->SendUniform("LightAmbient", glm::vec3(0.15f, 0.15f, 0.15f));
+	StaticGeometry->SendUniform("LightDiffuse", glm::vec3(0.7f, 0.7f, 0.7f));
+	StaticGeometry->SendUniform("LightSpecular", glm::vec3(0.8f, 0.8f, 0.8f));
+	StaticGeometry->SendUniform("LightAttenuationConstant", 1.0f);
+	StaticGeometry->SendUniform("LightAttenuationLinear", 0.1f);
+	StaticGeometry->SendUniform("LightAttenuationQuadratic", 0.01f);
+	StaticGeometry->SendUniform("LightSpecularExponent", 50.0f);
 
-	StaticGeometry.Unbind();
+	BasicScene.Draw();
+
+	StaticGeometry->Unbind();
 
 	renderText();
 
@@ -199,6 +198,12 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY) {
 		break;
 	case '1':
 		WireframeOn = !WireframeOn;
+		break;
+	case '2':
+		CursorOn = !CursorOn;
+		break;
+	case '3':
+		BasicScene.RemoveGameObject(Door);
 		break;
 	case '4':
 		break;

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <glm\glm.hpp>
+#include <cmath>
 
 #include "Objloader.h"
 
@@ -61,9 +62,16 @@ bool Mesh::LoadFromFile(const std::string str) {
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
 
-	if (!(loadOBJ(str.c_str(), vertices, uvs, normals))) {
+	glm::vec2 xCons, yCons, zCons;
+
+	if (!(loadOBJ(str.c_str(), vertices, uvs, normals, xCons, yCons, zCons))) {
 		return false;
 	}
+
+	_Width = std::abs(xCons.y - xCons.x);
+	_Height = std::abs(yCons.y - yCons.x);
+	_Length = std::abs(zCons.y - zCons.x);
+	
 
 	_NumVertices = vertices.size();
 	_NumFaces = _NumVertices / 3;

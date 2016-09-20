@@ -11,7 +11,6 @@ layout (location = 2) in vec3 in_normal;
 out vec2 texcoord;
 out vec3 norm;
 out vec3 pos;
-out float vertexID;
 
 void main() {
 	texcoord = in_uv;
@@ -22,6 +21,4 @@ void main() {
 	pos = viewSpace.xyz;
 
 	gl_Position = uProj * viewSpace;
-
-	vertexID = gl_VertexID;
 }

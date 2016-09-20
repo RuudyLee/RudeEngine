@@ -6,6 +6,7 @@
 #include "Texture.h"
 #include "Text.h"
 #include "Entity.h"
+#include "Scene.h"
 
 #include <glm\glm.hpp>
 
@@ -42,25 +43,24 @@ public:
 	float TotalGameTime = 0.0f;
 	float InterpolationParam = 0.0f;
 
-	ShaderProgram StaticGeometry;
+	std::shared_ptr<ShaderProgram> StaticGeometry;
 
-	std::shared_ptr<Mesh> GoatMesh;
-	std::shared_ptr<Mesh> LanceMesh;
+	std::shared_ptr<Mesh> DoorMesh;
 	std::shared_ptr<Mesh> GroundMesh;
-	std::shared_ptr<Texture> GoatTexture;
-	std::shared_ptr<Texture> LanceTexture;
+	std::shared_ptr<Texture> DoorTexture;
 	std::shared_ptr<Texture> GroundTexture;
 
-	Entity Goat;
-	Entity Lance;
+	Entity Door;
 	Entity Ground;
 
-	glm::mat4 GoatKnightTransform;
+	Scene BasicScene;
+
 	glm::mat4 CameraTransform;
 	glm::mat4 CameraProjection;
 
 	// states
 	bool WireframeOn = false;
+	bool CursorOn = false;
 	bool TextDisplayOn = false;
 
 	Text ModeDisplay;

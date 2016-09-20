@@ -8,6 +8,7 @@ Texture::~Texture() {
 
 bool Texture::Load(const std::string &file)
 {
+	std::cout << "Loading Texture from " << file << "...\n";
 	TexObj = SOIL_load_OGL_texture(file.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 
 	if (TexObj == 0) {

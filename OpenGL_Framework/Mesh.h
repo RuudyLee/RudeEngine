@@ -19,6 +19,9 @@ public:
 	unsigned int GetNumVertices() const;
 	GLuint GetVAO() const;
 
+	float _Width = 0.0f;
+	float _Length = 0.0f;
+	float _Height = 0.0f;
 private:
 	// OpenGL buffers and objects
 	GLuint _VBO_Vertices = 0;
@@ -28,5 +31,6 @@ private:
 
 	unsigned int _NumFaces = 0;
 	unsigned int _NumVertices = 0;
+
 };
 

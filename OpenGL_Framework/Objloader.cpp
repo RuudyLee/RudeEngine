@@ -6,6 +6,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <algorithm>
 
 #include <glm/glm.hpp>
 
@@ -15,7 +16,10 @@ bool loadOBJ(
 	const char * path,
 	std::vector<glm::vec3> &out_vertices,
 	std::vector<glm::vec2> &out_uvs,
-	std::vector<glm::vec3> &out_normals)
+	std::vector<glm::vec3> &out_normals,
+	glm::vec2 &xCons,
+	glm::vec2 &yCons,
+	glm::vec2 &zCons)
 {
 	std::cout << "Loading OBJ file " << path << "...\n";
 
@@ -44,6 +48,12 @@ bool loadOBJ(
 			glm::vec3 vertex;
 			fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
 			temp_vertices.push_back(vertex);
+
+			// keep track of the min-max constraints
+			xCons = glm::vec2(std::min(xCons.x, vertex.x), std::max(xCons.y, vertex.x));
+			yCons = glm::vec2(std::min(yCons.x, vertex.y), std::max(yCons.y, vertex.y));
+			zCons = glm::vec2(std::min(zCons.x, vertex.z), std::max(zCons.y, vertex.z));
+			
 		}
 		else if (strcmp(lineHeader, "vt") == 0)	{
 			glm::vec2 uv;
