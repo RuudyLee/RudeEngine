@@ -132,9 +132,6 @@ void Game::draw() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	//TODO: GoatKnightTransform = glm::scale(glm::mat4(1.0f), glm::vec3(0.001f, 0.001f, 0.001f));
-	
-
 	StaticGeometry->Bind();
 	StaticGeometry->SendUniformMat4("uView", &CameraTransform[0][0], false);
 	StaticGeometry->SendUniformMat4("uProj", &CameraProjection[0][0], false);
