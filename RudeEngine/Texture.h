@@ -7,7 +7,7 @@ public:
 	Texture() = default;
 	~Texture();
 
-	bool Load(const std::string &file);
+	void Load(const std::string &file);
 	void Unload();
 
 	void Bind();

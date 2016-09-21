@@ -1,4 +1,5 @@
 #include "ShaderProgram.h"
+#include "Errors.h"
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -10,7 +11,7 @@ ShaderProgram::ShaderProgram() {
 ShaderProgram::~ShaderProgram() {
 }
 
-bool ShaderProgram::Load(const std::string &vertFile, const std::string &fragFile) {
+void ShaderProgram::Load(const std::string &vertFile, const std::string &fragFile) {
 	// create shader and program objects
 	_VertexShader = glCreateShader(GL_VERTEX_SHADER);
 	_FragShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -27,17 +28,15 @@ bool ShaderProgram::Load(const std::string &vertFile, const std::string &fragFil
 
 	// Compile the code
 	if (!CompileShader(_VertexShader)) {
-		std::cout << "Vertex Shader failed to compile.\n";
 		OutputShaderLog(_VertexShader);
 		Unload();
-		return false;
+		FatalError("Vertex Shader failed to compile.");
 	}
 
 	if (!CompileShader(_FragShader)) {
-		std::cout << "Fragment Shader failed to compile.\n";
 		OutputShaderLog(_FragShader);
 		Unload();
-		return false;
+		FatalError("Fragment Shader failed to compile.");
 	}
 
 	// setup our program object
@@ -45,14 +44,12 @@ bool ShaderProgram::Load(const std::string &vertFile, const std::string &fragFil
 	glAttachShader(_ProgramID, _FragShader);
 
 	if (!LinkProgram()) {
-		std::cout << "Shader program failed to link.\n";
 		OutputProgramLog();
 		Unload();
-		return false;
+		FatalError("Shader program failed to link.");
 	}
 
 	_IsInit = true;
-	return true;
 }
 
 bool ShaderProgram::IsLoaded() const {

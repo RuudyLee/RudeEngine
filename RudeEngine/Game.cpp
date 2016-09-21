@@ -18,39 +18,16 @@ void Game::initializeGame() {
 	ModeDisplay.Init();
 	glEnable(GL_DEPTH_TEST);
 
-	StaticGeometry = std::shared_ptr<ShaderProgram>(new ShaderProgram());
-	if (!StaticGeometry->Load("./Assets/Shaders/StaticGeometry.vert", "./Assets/Shaders/Phong.frag")) {
-		std::cout << "Shader failed to Initalize.\n";
-		system("pause");
-		exit(0);
-	}
+	// Shader Programs
+	(StaticGeometry = std::shared_ptr<ShaderProgram>(new ShaderProgram()))->Load("./Assets/Shaders/StaticGeometry.vert", "./Assets/Shaders/Phong.frag");
+	
+	// Meshes
+	(DoorMesh = std::shared_ptr<Mesh>(new Mesh()))->LoadFromFile("./Assets/Models/Door.obj");
+	(GroundMesh = std::shared_ptr<Mesh>(new Mesh()))->LoadFromFile("./Assets/Models/Ground.obj");
 
-	DoorMesh = std::shared_ptr<Mesh>(new Mesh());
-	if (!DoorMesh->LoadFromFile("./Assets/Models/Door.obj")) {
-		std::cout << "Model failed to load.\n";
-		system("pause");
-		exit(0);
-	}
-
-	GroundMesh = std::shared_ptr<Mesh>(new Mesh());
-	if (!GroundMesh->LoadFromFile("./Assets/Models/Ground.obj")) {
-		std::cout << "Model failed to load.\n";
-		system("pause");
-		exit(0);
-	}
-
-	DoorTexture = std::shared_ptr<Texture>(new Texture());
-	if (!DoorTexture->Load("./Assets/Textures/Door.tga")) {
-		system("pause");
-		exit(0);
-	}
-
-
-	GroundTexture = std::shared_ptr<Texture>(new Texture());
-	if (!GroundTexture->Load("./Assets/Textures/Ground.png")) {
-		system("pause");
-		exit(0);
-	}
+	// Textures
+	(DoorTexture = std::shared_ptr<Texture>(new Texture()))->Load("./Assets/Textures/Door.tga");
+	(GroundTexture = std::shared_ptr<Texture>(new Texture()))->Load("./Assets/Textures/Ground.png");
 
 	// Entities
 	Door.Init(DoorMesh, DoorTexture);

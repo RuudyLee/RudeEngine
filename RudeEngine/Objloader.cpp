@@ -1,6 +1,8 @@
 #ifdef _WIN32
 #define _CRT_SECURE_NO_DEPRECATE
 #endif
+#include "Objloader.h"
+#include "Errors.h"
 #include <vector>
 #include <stdio.h>
 #include <string>
@@ -10,9 +12,7 @@
 
 #include <glm/glm.hpp>
 
-#include "Objloader.h"
-
-bool loadOBJ(
+void loadOBJ(
 	const char * path,
 	std::vector<glm::vec3> &out_vertices,
 	std::vector<glm::vec2> &out_uvs,
@@ -31,9 +31,7 @@ bool loadOBJ(
 
 	FILE * file = fopen(path, "r");
 	if (file == NULL) {
-		std::cout << "File doesn't exist.\n";
-		getchar();
-		return false;
+		FatalError("File doesn't exist.\n");
 	}
 
 	while (1) {
@@ -71,8 +69,7 @@ bool loadOBJ(
 			unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
 			int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
 			if (matches != 9) {
-				std::cout << "File could not be read due to faces.";
-				return false;
+				FatalError(std::string(path) + " could not be read due to faces.");
 			}
 			vertexIndices.push_back(vertexIndex[0]);
 			vertexIndices.push_back(vertexIndex[1]);
@@ -107,6 +104,4 @@ bool loadOBJ(
 		out_uvs.push_back(uv);
 		out_normals.push_back(normal);
 	}
-
-	return true;
 }

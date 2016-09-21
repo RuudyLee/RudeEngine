@@ -9,7 +9,7 @@ public:
 	~Mesh();
 
 	// Load a mesh, and send to OpenGL
-	bool LoadFromFile(const std::string str);
+	void LoadFromFile(const std::string str);
 
 	// Release data from OpenGL (VRAM)
 	void Unload();

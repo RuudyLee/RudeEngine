@@ -57,16 +57,14 @@ Mesh::~Mesh() {
 }
 
 // Load a mesh, and send to OpenGL
-bool Mesh::LoadFromFile(const std::string str) {
+void Mesh::LoadFromFile(const std::string str) {
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
 
 	glm::vec2 xCons, yCons, zCons;
 
-	if (!(loadOBJ(str.c_str(), vertices, uvs, normals, xCons, yCons, zCons))) {
-		return false;
-	}
+	loadOBJ(str.c_str(), vertices, uvs, normals, xCons, yCons, zCons);
 
 	_Width = std::abs(xCons.y - xCons.x);
 	_Height = std::abs(yCons.y - yCons.x);
@@ -104,8 +102,6 @@ bool Mesh::LoadFromFile(const std::string str) {
 	// Cleanup
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
-	return true;
 }
 
 // Release data from OpenGL (VRAM)

@@ -34,6 +34,9 @@
     <ClCompile Include="Utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Errors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity.h">
@@ -66,12 +69,23 @@
     <ClInclude Include="Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Errors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\Phong.frag" />
-    <None Include="Assets\Shaders\StaticGeometry.vert" />
-    <None Include="Assets\Shaders\Text\Text.frag" />
-    <None Include="Assets\Shaders\Text\Text.vert" />
+    <None Include="Assets\Shaders\Text\Text.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\StaticGeometry.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\Text\Text.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\Phong.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -79,6 +93,9 @@
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{a81fd8de-2a24-4862-8641-6302cccac7b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{bb35aca7-fe5a-422f-a079-5f4e63e8c7de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

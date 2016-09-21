@@ -9,7 +9,7 @@ public:
 	~ShaderProgram();
 
 	// loads a vertex shader and a fragment shader, and places them in a program
-	bool Load(const std::string &vertFile, const std::string &fragFile);
+	void Load(const std::string &vertFile, const std::string &fragFile);
 	bool IsLoaded() const;
 	void Unload();
 	bool LinkProgram();
