@@ -1,13 +1,13 @@
 #include <windows.h>
 #include <iostream>
 #include <memory>
-#include "Game.h"
+#include "Application.h"
 #include <GL\glew.h>
 #include <GL\freeglut.h>
 
 const int FRAME_DELAY_SPRITE = 1000 / FRAMES_PER_SECOND;
 
-std::unique_ptr<Game> theGame;
+std::unique_ptr<Application> theGame;
 
 /* function DisplayCallbackFunction(void)
  * Description:
@@ -15,7 +15,7 @@ std::unique_ptr<Game> theGame;
  *  - this draws the sprites appropriately
  */
 void DisplayCallbackFunction(void) {
-	theGame->draw();
+	theGame->Draw();
 }
 
 /* function void KeyboardCallbackFunction(unsigned char, int, int)
@@ -43,7 +43,7 @@ void KeyboardUpCallbackFunction(unsigned char key, int x, int y) {
  *  - FRAME_DELAY_SPRITE is the number of milliseconds to wait before calling the timer again
  */
 void TimerCallbackFunction(int value) {
-	theGame->update();
+	theGame->Update();
 
 	glutPostRedisplay();
 	glutTimerFunc(FRAME_DELAY_SPRITE, TimerCallbackFunction, 0);
@@ -88,8 +88,8 @@ int main(int argc, char **argv) {
 	glutTimerFunc(1, TimerCallbackFunction, 0);
 
 	/* init the game */
-	theGame = std::unique_ptr<Game>(new Game());
-	theGame->initializeGame();
+	theGame = std::unique_ptr<Application>(new Application());
+	theGame->Initialize();
 
 	/* start the game */
 	glutMainLoop();

@@ -22,14 +22,14 @@
 #define MOVEMENT_SPEED			10.0f
 #define MOUSE_SPEED				0.001f
 
-class Game {
+class Application {
 public:
-	Game();
-	~Game();
+	Application();
+	~Application();
 
-	void initializeGame();
-	void update();
-	void draw();
+	void Initialize();
+	void Update();
+	void Draw();
 	void renderText();
 
 	/* input callback functions */
@@ -63,7 +63,7 @@ public:
 	bool CursorOn = false;
 	bool TextDisplayOn = false;
 
-	Text ModeDisplay;
+	Text TextDisplay;
 
 	/* For FPS Control */
 	bool KeyWDown = false;

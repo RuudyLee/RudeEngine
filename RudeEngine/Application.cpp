@@ -1,21 +1,21 @@
-#include "Game.h"
+#include "Application.h"
 #include "Utilities.h"
 
 #include <GL\glew.h>
 #include <GL\freeglut.h>
 #include <glm\gtc\matrix_transform.hpp>
 
-Game::Game() {
+Application::Application() {
 }
 
-Game::~Game() {
+Application::~Application() {
 	StaticGeometry->Unload();
 }
 
-void Game::initializeGame() {
+void Application::Initialize() {
 	updateTimer = std::unique_ptr<Timer>(new Timer());
 
-	ModeDisplay.Init();
+	TextDisplay.Init();
 	glEnable(GL_DEPTH_TEST);
 
 	// Shader Programs
@@ -42,7 +42,7 @@ void Game::initializeGame() {
 	CameraProjection = glm::perspective(60.0f, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 10000.0f);
 }
 
-void Game::update() {
+void Application::Update() {
 	// update our clock so we have the delta time since the last update
 	updateTimer->tick();
 
@@ -75,10 +75,10 @@ void Game::update() {
 		glm::vec3 up = glm::cross(right, direction);
 
 		if (KeyWDown) {
-			position += direction * deltaTime * MOVEMENT_SPEED;
+			position += glm::vec3(direction.x, 0.0f, direction.z) * deltaTime * MOVEMENT_SPEED;
 		}
 		if (KeySDown) {
-			position -= direction * deltaTime * MOVEMENT_SPEED;
+			position -= glm::vec3(direction.x, 0.0f, direction.z) * deltaTime * MOVEMENT_SPEED;
 		}
 		if (KeyDDown) {
 			position += right * deltaTime * MOVEMENT_SPEED;
@@ -93,7 +93,7 @@ void Game::update() {
 	BasicScene.Update(deltaTime);
 }
 
-void Game::draw() {
+void Application::Draw() {
 	/* Black background */
 	glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -133,7 +133,7 @@ void Game::draw() {
 
 }
 
-void Game::renderText()
+void Application::renderText()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	/* Render Text for mode and values */
@@ -142,28 +142,28 @@ void Game::renderText()
 		float sx = 2.0f / glutGet(GLUT_WINDOW_WIDTH);
 		float sy = 2.0f / glutGet(GLUT_WINDOW_HEIGHT);
 
-		ModeDisplay.program.Bind();
+		TextDisplay.program.Bind();
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glm::vec4 Color = { 1, 0, 0, 1 };
-		FT_Set_Pixel_Sizes(ModeDisplay.face, 0, 24);
-		ModeDisplay.program.SendUniform("uColor", Color);
+		FT_Set_Pixel_Sizes(TextDisplay.face, 0, 24);
+		TextDisplay.program.SendUniform("uColor", Color);
 
 		if (WireframeOn) {
-			ModeDisplay.Render("1: Wireframe mode is ON", -1 + 8 * sx, 1 - 50 * sy, sx, sy);
+			TextDisplay.Render("1: Wireframe mode is ON", -1 + 8 * sx, 1 - 50 * sy, sx, sy);
 		}
 		else {
-			ModeDisplay.Render("1: Wireframe mode is OFF", -1 + 8 * sx, 1 - 50 * sy, sx, sy);
+			TextDisplay.Render("1: Wireframe mode is OFF", -1 + 8 * sx, 1 - 50 * sy, sx, sy);
 		}
 
 		glDisable(GL_BLEND);
-		ModeDisplay.program.Unbind();
+		TextDisplay.program.Unbind();
 	}
 }
 
-void Game::keyboardDown(unsigned char key, int mouseX, int mouseY) {
+void Application::keyboardDown(unsigned char key, int mouseX, int mouseY) {
 	switch (key)
 	{
 	case 27: // the escape key
@@ -199,7 +199,7 @@ void Game::keyboardDown(unsigned char key, int mouseX, int mouseY) {
 	}
 }
 
-void Game::keyboardUp(unsigned char key, int mouseX, int mouseY) {
+void Application::keyboardUp(unsigned char key, int mouseX, int mouseY) {
 	switch (key)
 	{
 	case 32: // the space bar
@@ -223,7 +223,7 @@ void Game::keyboardUp(unsigned char key, int mouseX, int mouseY) {
 	}
 }
 
-void Game::mouseClicked(int button, int state, int x, int y) {
+void Application::mouseClicked(int button, int state, int x, int y) {
 	if (state == GLUT_DOWN)	{
 		switch (button)	{
 		case GLUT_LEFT_BUTTON:
@@ -250,7 +250,7 @@ void Game::mouseClicked(int button, int state, int x, int y) {
  *   must be converted to screen coordinates using the screen to window pixels ratio
  *   and the y must be flipped to make the bottom left corner the origin.
  */
-void Game::mouseMoved(int x, int y) {
+void Application::mouseMoved(int x, int y) {
 	xpos = (float)x;
 	ypos = (float)y;
 }
