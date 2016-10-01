@@ -39,6 +39,11 @@ void Application::Initialize() {
 	BasicScene.AddGameObject(Door);
 	BasicScene.AddGameObject(Ground);
 
+	// Sounds
+	Sound.init();
+	Sound.createSound("./Assets/Sounds/drumloop.wav", 0, glm::vec3(0.0f, 0.0f, 0.0f));
+	Sound.createSound("./Assets/Sounds/jaguar.wav", 1, glm::vec3(0.0f, 0.0f, 10.0f));
+
 	CameraProjection = glm::perspective(60.0f, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 10000.0f);
 }
 
@@ -87,10 +92,14 @@ void Application::Update() {
 			position -= right * deltaTime * MOVEMENT_SPEED;
 		}
 
+		std::cout << "Pos: " << position.x << ", " << position.y << ", " << position.z << std::endl;
 		CameraTransform = glm::lookAt(position, position + direction, up);
+		Sound.setListener(position, direction, up);
 	}
 
 	BasicScene.Update(deltaTime);
+	
+	Sound.update();
 }
 
 void Application::Draw() {

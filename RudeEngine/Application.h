@@ -7,6 +7,7 @@
 #include "Text.h"
 #include "Entity.h"
 #include "Scene.h"
+#include "SoundSystem.h"
 
 #include <glm\glm.hpp>
 
@@ -64,6 +65,7 @@ public:
 	bool TextDisplayOn = false;
 
 	Text TextDisplay;
+	SoundSystem Sound;
 
 	/* For FPS Control */
 	bool KeyWDown = false;
